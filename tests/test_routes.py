@@ -123,4 +123,21 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
+
+    def test_cors_header(self):
+        """It should return a CORS header"""
+        response = self.client.get("/", headers={"Origin": "http://example.com"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.headers.get("Access-Control-Allow-Origin"),
+            "http://example.com",
+        )
+
+    def test_security_headers(self):
+        """It should return security headers"""
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNotNone(response.headers.get("X-Content-Type-Options"))
+        self.assertIsNotNone(response.headers.get("X-Frame-Options"))
+
     # ADD YOUR TEST CASES HERE ...
