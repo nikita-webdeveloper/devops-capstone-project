@@ -26,6 +26,11 @@ jobs:
           --health-retries=5
 
     steps:
+      - name: Initialize containers
+        run: |
+          echo "Initialize containers"
+          docker ps
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -39,11 +44,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Lint
+      - name: Lint with flake8
         run: |
           flake8 service tests
+
+      - name: Run Pylint
+        run: |
           pylint service
 
-      - name: Test
+      - name: Run nosetests
         run: |
           nosetests
+
+      - name: Post Checkout
+        if: always()
+        run: |
+          echo "Post Checkout"
+
+      - name: Stop containers
+        if: always()
+        run: |
+          echo "Stop containers"
+
